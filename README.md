@@ -1,6 +1,6 @@
 # Simulator for Custom Applications SDK 
 
-This is under heavy development currently.
+Updated by [Roman Garms](https://github.com/Romano-Garmez) to be buildable in 2024. I intend to make some changes later.
 
 ## Discussion
 
