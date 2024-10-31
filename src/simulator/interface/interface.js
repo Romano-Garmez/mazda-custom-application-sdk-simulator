@@ -39,7 +39,7 @@ var fs = require("fs");
  */
 
 
-(function() {
+(function () {
 
 	Interface = {
 
@@ -59,7 +59,7 @@ var fs = require("fs");
 		 * Initializes the interface and simulator
 		 */
 
-		initialize: function() {
+		initialize: function () {
 
 			// startup console
 			Logger.info("Starting up on platform " + process.platform);
@@ -68,7 +68,7 @@ var fs = require("fs");
 			framework.ready();
 
 			// load additional css
-			if(process.platform.substr(0, 3) == "win") {
+			if (process.platform.substr(0, 3) == "win") {
 				framework.loadCSS("interface-win.css");
 			}
 
@@ -88,11 +88,11 @@ var fs = require("fs");
 			this.dataView = $("#dataview");
 
 			// assign core actions to static elements
-			$("#home").on("click", function() {
+			$("#home").on("click", function () {
 				this.showAppMenu();
 			}.bind(this));
 
-			$("#leftbutton").on("click", function() {
+			$("#leftbutton").on("click", function () {
 				this.showAppMenu();
 			}.bind(this));
 
@@ -103,23 +103,23 @@ var fs = require("fs");
 			this.refresh();
 
 			// register ipc messages
-			var ipc = require('ipc');
+			const { ipcRenderer } = require('electron');
 
-			ipc.on('runtimeLocation', function(location) {
+			ipcRenderer.on('runtimeLocation', function (event, location) {
 				localStorage.setItem("runtimeLocation", location);
-				this.loadRuntime(function() {
+				this.loadRuntime(function () {
 					this.showFromRecover();
 				}.bind(this));
-		  }.bind(this));
+			}.bind(this));
 
-		    ipc.on('appsLocation', function(location) {
+			ipcRenderer.on('appsLocation', function (event, location) {
 				localStorage.setItem("appsLocation", location);
-				this.loadApplications(function() {
+				this.loadApplications(function () {
 					this.showFromRecover();
 				}.bind(this));
-		  }.bind(this));
+			}.bind(this));
 
-		    // initialize storage
+			// initialize storage
 			$(window).on('storage', function (e) {
 
 				console.log(e);
@@ -130,13 +130,13 @@ var fs = require("fs");
 		 * (refresh)
 		 */
 
-		refresh: function() {
+		refresh: function () {
 
 			// load runtime
-			this.loadRuntime(function() {
+			this.loadRuntime(function () {
 
 				// runtime was loaded
-				this.loadApplications(function() {
+				this.loadApplications(function () {
 
 					// show app menu
 					this.showFromRecover();
@@ -150,7 +150,7 @@ var fs = require("fs");
 		 * (reload)
 		 */
 
-		reload: function() {
+		reload: function () {
 			this.refresh();
 			//document.location.reload(true);
 		},
@@ -159,14 +159,14 @@ var fs = require("fs");
 		 * (loadRuntime)
 		 */
 
-		loadRuntime: function(callback) {
+		loadRuntime: function (callback) {
 
 			this.runtimeLoaded = false;
 
 			var runtimeLocation = localStorage.getItem("runtimeLocation");
 
 			// check
-			if(!runtimeLocation)
+			if (!runtimeLocation)
 				return Logger.error("You need to select the location of the runtime package first.");
 
 			// load runtime
@@ -176,7 +176,7 @@ var fs = require("fs");
 			window.CustomApplicationsHandler = false;
 
 			// stop watcher
-			if(this.runtimeWatcher) this.runtimeWatcher.close();
+			if (this.runtimeWatcher) this.runtimeWatcher.close();
 
 			// unload scripts
 			$("script[src*='" + runtimeLocation + "/runtime']").remove();
@@ -185,12 +185,12 @@ var fs = require("fs");
 			$("link[href*='" + runtimeLocation + "/templates']").remove();
 
 			// load runtime.js
-			framework.loadJS("file://" + runtimeLocation + "/runtime/runtime.js", function() {
+			framework.loadJS("file://" + runtimeLocation + "/runtime/runtime.js", function () {
 
 				// load CustomApplicationSurfaceTmplt
-				framework.loadJS("file://" + runtimeLocation + "/templates/SurfaceTmplt/js/SurfaceTmplt.js", function() {
+				framework.loadJS("file://" + runtimeLocation + "/templates/SurfaceTmplt/js/SurfaceTmplt.js", function () {
 
-					if(typeof(CustomApplicationsHandler) == "undefined")
+					if (typeof (CustomApplicationsHandler) == "undefined")
 						return Logger.error("Error while loading the runtime package.");
 
 					// load css
@@ -204,19 +204,19 @@ var fs = require("fs");
 					CustomApplicationsHandler.paths.vendor = "file://" + runtimeLocation + "/runtime/vendor/";
 
 					// load data
-			       	CustomApplicationDataHandler.pause();
-			       	CustomApplicationDataHandler.paths.data = "file://" + __dirname + "/../data/casdk-";
+					CustomApplicationDataHandler.pause();
+					CustomApplicationDataHandler.paths.data = "file://" + __dirname + "/../data/casdk-";
 
-			       	Logger.info("Attempting to load vehicle mock data");
-			        CustomApplicationDataHandler.retrieve(function(data) {
-			        	this.setVehicleData(data);
-			        }.bind(this));
+					Logger.info("Attempting to load vehicle mock data");
+					CustomApplicationDataHandler.retrieve(function (data) {
+						this.setVehicleData(data);
+					}.bind(this));
 
 					// done
 					this.runtimeLoaded = true;
 
 					// engage watcher
-					this.runtimeWatcher = new Watcher(runtimeLocation, "runtime", function() {
+					this.runtimeWatcher = new Watcher(runtimeLocation, "runtime", function () {
 
 						// reload entire window
 						this.refresh();
@@ -224,7 +224,7 @@ var fs = require("fs");
 					}.bind(this));
 
 					// callback
-					if(Is.fn(callback)) callback();
+					if (Is.fn(callback)) callback();
 
 				}.bind(this));
 
@@ -235,10 +235,10 @@ var fs = require("fs");
 		 * (loadApplications)
 		 */
 
-		loadApplications: function(callback) {
+		loadApplications: function (callback) {
 
 			// sanity check
-			if(!this.runtimeLoaded || typeof(CustomApplicationsHandler) == "undefined")
+			if (!this.runtimeLoaded || typeof (CustomApplicationsHandler) == "undefined")
 				return Logger.error("Error while loading applications. No runtime system was loaded.");
 
 			// stop watchers
@@ -255,14 +255,14 @@ var fs = require("fs");
 			var appsLocation = localStorage.getItem("appsLocation");
 
 			// check
-			if(!appsLocation)
+			if (!appsLocation)
 				return Logger.error("You need to select the location of the applications first.");
 
 			// load runtime
 			Logger.info(sprintr("Loading applications from {0}", appsLocation));
 
 			// stop watcher
-			if(this.appsWatcher) this.appsWatcher.close();
+			if (this.appsWatcher) this.appsWatcher.close();
 
 			// unload scripts
 			$("script[src*='" + appsLocation + "']").remove();
@@ -272,19 +272,19 @@ var fs = require("fs");
 			CustomApplicationsHandler.paths.applications = "file://" + appsLocation + "/";
 
 			// load from dir
-			fs.readdir(appsLocation, function(err, data) {
+			fs.readdir(appsLocation, function (err, data) {
 
-				if(err) return Logger.error(sprintr("Unable to load applications from {0}", appsLocation));
+				if (err) return Logger.error(sprintr("Unable to load applications from {0}", appsLocation));
 
 				// initialize
 				var appsToLoad = [];
 
 				// process data
-				for(var i = 0; i < data.length; i++) {
+				for (var i = 0; i < data.length; i++) {
 
 					var path = appsLocation + "/" + data[i];
 
-					if(fs.lstatSync(path).isDirectory()) {
+					if (fs.lstatSync(path).isDirectory()) {
 						appsToLoad.push(data[i]);
 					}
 				}
@@ -297,14 +297,14 @@ var fs = require("fs");
 					CustomApplicationsHandler.loader.loadJavascript(
 						CustomApplicationsHandler.loader.fromFormatted("{0}/app.js", appsToLoad),
 						CustomApplicationsHandler.paths.applications,
-						function() {
+						function () {
 
 							// create menu items
 							this.completeApplications(CustomApplicationsHandler.getMenuItems(), callback);
 
 						}.bind(this)
 					);
-				} catch(e) {
+				} catch (e) {
 					// error message
 					CustomApplicationsHandler.log.error(this.__name, "Error while retrieving applications", e);
 
@@ -318,7 +318,7 @@ var fs = require("fs");
 		 * (completeApplications)
 		 */
 
-		completeApplications: function(items, callback) {
+		completeApplications: function (items, callback) {
 
 			var appsLocation = localStorage.getItem("appsLocation");
 
@@ -334,7 +334,7 @@ var fs = require("fs");
 
 			// engage watcher for apps.js
 
-			this.appsWatcher = new Watcher(appsLocation, "applications", function() {
+			this.appsWatcher = new Watcher(appsLocation, "applications", function () {
 
 				// reload
 				this.loadApplications();
@@ -343,7 +343,7 @@ var fs = require("fs");
 
 
 			// callback
-			if(Is.fn(callback)) callback();
+			if (Is.fn(callback)) callback();
 		},
 
 		/**
@@ -352,17 +352,17 @@ var fs = require("fs");
 		 * Shows an application that previously invoked or display the menu
 		 */
 
-		showFromRecover: function() {
+		showFromRecover: function () {
 
 			clearTimeout(this.recoverTimer);
 
-			this.recoverTimer = setTimeout(function() {
+			this.recoverTimer = setTimeout(function () {
 
 				// sanity check
-				if(!this.appsLoaded || !this.applications) return;
+				if (!this.appsLoaded || !this.applications) return;
 
 				// run last app id
-				if(this.lastApplicationId && this.invokeApplication(this.lastApplicationId)) {
+				if (this.lastApplicationId && this.invokeApplication(this.lastApplicationId)) {
 					return;
 				}
 
@@ -379,10 +379,10 @@ var fs = require("fs");
 		 * Renders the application list
 		 */
 
-		showAppMenu: function() {
+		showAppMenu: function () {
 
 			// sanity check
-			if(!this.appsLoaded || !this.applications) return;
+			if (!this.appsLoaded || !this.applications) return;
 
 			// clear current application
 			this.lastApplicationId = false;
@@ -394,38 +394,38 @@ var fs = require("fs");
 			this.menu.html("");
 
 			// create items
-            this.applications.forEach(function(item, index) {
+			this.applications.forEach(function (item, index) {
 
-            	// get title and id
-            	var id = item.appData ? item.appData.appId : item.id,
-            		title = item.appData ? item.title : item.getTitle();
+				// get title and id
+				var id = item.appData ? item.appData.appId : item.id,
+					title = item.appData ? item.title : item.getTitle();
 
-            	this.menu.append($("<a/>").attr({
-            		appId: id,
-            		menuIndex: index,
-            	}).on({
+				this.menu.append($("<a/>").attr({
+					appId: id,
+					menuIndex: index,
+				}).on({
 
-            		click: function() {
+					click: function () {
 
-            			this.invokeApplication(id);
+						this.invokeApplication(id);
 
-            		}.bind(this),
+					}.bind(this),
 
-            	}).hover(function() {
+				}).hover(function () {
 
-        			this.menuIndex = index;
-        			this.setAppMenuFocus();
+					this.menuIndex = index;
+					this.setAppMenuFocus();
 
-        		}.bind(this)).append(title));
+				}.bind(this)).append(title));
 
-            }.bind(this));
+			}.bind(this));
 
-            // select first
-            this.menuIndex = 0;
-            this.maxMenuIndex = this.applications.length;
-            this.setAppMenuFocus();
+			// select first
+			this.menuIndex = 0;
+			this.maxMenuIndex = this.applications.length;
+			this.setAppMenuFocus();
 
-            // reset view
+			// reset view
 			this.view.fadeOut();
 			this.menu.fadeIn();
 			this.leftButton.fadeOut();
@@ -443,7 +443,7 @@ var fs = require("fs");
 		 * setAppMenuFocus
 		 */
 
-		setAppMenuFocus: function(mc) {
+		setAppMenuFocus: function (mc) {
 
 			// clear
 			this.menu.find(".focus").removeClass("focus");
@@ -453,7 +453,7 @@ var fs = require("fs");
 
 			this.menuIndexAppId = item.attr("appId");
 
-			if(mc) {
+			if (mc) {
 				this.menu.scrollTop(item.position().top);
 			}
 
@@ -463,7 +463,7 @@ var fs = require("fs");
 		 * (invokeApplication)
 		 */
 
-		invokeApplication: function(appId) {
+		invokeApplication: function (appId) {
 
 			// fadeout menu
 			this.menu.fadeOut();
@@ -475,7 +475,7 @@ var fs = require("fs");
 			//Logger.updateApplication(CustomApplicationsHandler.applications[appId]);
 
 			// check result
-			if(result) {
+			if (result) {
 				// send to mmui
 				framework.sendEventToMmui();
 
@@ -494,34 +494,34 @@ var fs = require("fs");
 		 * Vehicle Data
 		 */
 
-		setVehicleData: function(data) {
+		setVehicleData: function (data) {
 
 			// create groups
 			var groups = [
-				{name: 'General', mapping: VehicleData.general},
-				{name: 'Vehicle Data', mapping: VehicleData.vehicle},
-				{name: 'Vehicle Fuel', mapping: VehicleData.fuel},
-				{name: 'Vehicle Temperatures', mapping: VehicleData.temperature},
-				{name: 'GPS', mapping: VehicleData.gps},
-				{name: 'All Vehicle Data', values: data}
+				{ name: 'General', mapping: VehicleData.general },
+				{ name: 'Vehicle Data', mapping: VehicleData.vehicle },
+				{ name: 'Vehicle Fuel', mapping: VehicleData.fuel },
+				{ name: 'Vehicle Temperatures', mapping: VehicleData.temperature },
+				{ name: 'GPS', mapping: VehicleData.gps },
+				{ name: 'All Vehicle Data', values: data }
 			];
 
 			// clear empty
 			this.dataView.empty();
 
 			// rebuild vehicle data
-			groups.forEach(function(group) {
+			groups.forEach(function (group) {
 
 				// prepare mapping to value table
-				if(group.mapping) {
+				if (group.mapping) {
 
 					// get actual values
 					var values = [];
-					$.each(group.mapping, function(id, params) {
+					$.each(group.mapping, function (id, params) {
 
-						if(params.id) {
+						if (params.id) {
 							var tmp = CustomApplicationDataHandler.get(params.id);
-							if(tmp) {
+							if (tmp) {
 								params.value = tmp.value;
 								values.push($.extend(params, tmp));
 							}
@@ -531,7 +531,7 @@ var fs = require("fs");
 				} else {
 
 					// build data array
-					var values = $.map(group.values, function(value) {
+					var values = $.map(group.values, function (value) {
 						return value;
 					});
 				}
@@ -545,18 +545,18 @@ var fs = require("fs");
 				var container = $("<div/>").addClass("items").appendTo(groupDiv);
 
 				// sort by name
-				values.sort(function(a, b) {
+				values.sort(function (a, b) {
 					return a.name > b.name ? 1 : -1;
 				});
 
 				// set keys
-				values.forEach(function(value) {
+				values.forEach(function (value) {
 
 					var item = $("<div/>").addClass("item").appendTo(container);
 
 					var tp = value.type;
-					switch(value.type) {
-						case "string": tp= "str"; break;
+					switch (value.type) {
+						case "string": tp = "str"; break;
 						case "double": tp = "dbl"; break;
 						default: tp = "int"; break;
 					}
@@ -567,13 +567,13 @@ var fs = require("fs");
 
 					var editorContainer = $("<span/>").appendTo(item);
 
-					switch(value.input) {
+					switch (value.input) {
 
 						case "list":
 							var editor = $("<select/>").appendTo(editorContainer);
 
 							// build list
-							$.each(value.values, function(k, v) {
+							$.each(value.values, function (k, v) {
 
 								editor.append($("<option/>").val(k).append(v));
 
@@ -584,7 +584,7 @@ var fs = require("fs");
 							break;
 
 						case "range":
-							var editor = $("<input/>").attr({type: "range", min: value.min, max: value.max, step: value.step | 1}).val(value.value).appendTo(editorContainer),
+							var editor = $("<input/>").attr({ type: "range", min: value.min, max: value.max, step: value.step | 1 }).val(value.value).appendTo(editorContainer),
 								editorLabel = $("<span/>").addClass("inputlabel").html(value.value).appendTo(editorContainer);
 							break;
 
@@ -593,16 +593,16 @@ var fs = require("fs");
 							break;
 					}
 
-					if(editor) {
-						editor.on("input", function() {
+					if (editor) {
+						editor.on("input", function () {
 
-							if(editorLabel) {
+							if (editorLabel) {
 								editorLabel.html($(this).val());
 							}
 
 							var v = editor.val();
 
-							if(value.factor) v = v / value.factor;
+							if (value.factor) v = v / value.factor;
 
 							// notify customer Handler
 							CustomApplicationDataHandler.setValue(value.id, v);
@@ -621,9 +621,9 @@ var fs = require("fs");
 		 * (registerApplicationWatchers)
 		 */
 
-		registerApplicationWatchers: function() {
+		registerApplicationWatchers: function () {
 
-			if(!this.applications || !this.applicationsWatchers) return false;
+			if (!this.applications || !this.applicationsWatchers) return false;
 
 			// clear all watchers
 			this.deregisterApplicationWatchers();
@@ -632,14 +632,14 @@ var fs = require("fs");
 			var appsLocation = localStorage.getItem("appsLocation");
 
 			// sanity check
-			if(!appsLocation) return false;
+			if (!appsLocation) return false;
 
 			// register new watchers
-			this.applications.forEach(function(item, index) {
+			this.applications.forEach(function (item, index) {
 
 				var fn = appsLocation + "/" + item.appData.appId;
 
-				this.applicationsWatchers[index] = new Watcher(fn, item.appData.appId, function() {
+				this.applicationsWatchers[index] = new Watcher(fn, item.appData.appId, function () {
 
 					// reload this specific application
 					this.reloadApplication(item.appData.appId, fn, index);
@@ -656,13 +656,13 @@ var fs = require("fs");
 		 * (deregisterApplicationWatchers)
 		 */
 
-		deregisterApplicationWatchers: function() {
+		deregisterApplicationWatchers: function () {
 
-			if(!this.applicationsWatchers) return false;
+			if (!this.applicationsWatchers) return false;
 
-			this.applicationsWatchers.forEach(function(item, index) {
+			this.applicationsWatchers.forEach(function (item, index) {
 
-				if(this.applicationsWatchers[index]) {
+				if (this.applicationsWatchers[index]) {
 					this.applicationsWatchers[index].close();
 					this.applicationsWatchers[index] = false;
 				}
@@ -677,15 +677,15 @@ var fs = require("fs");
 		 * replace during runtime the application and reregister it.
 		 */
 
-		reloadApplication: function(id, location, index) {
+		reloadApplication: function (id, location, index) {
 
 			// clean up current application
-			if(this.lastApplicationId == id) {
+			if (this.lastApplicationId == id) {
 				framework.cleanup();
 			}
 
 			// first destroy the current application
-			if(CustomApplicationsHandler.applications[id]) {
+			if (CustomApplicationsHandler.applications[id]) {
 				CustomApplicationsHandler.sleep(CustomApplicationsHandler.applications[id]);
 			}
 
@@ -694,10 +694,10 @@ var fs = require("fs");
 			$("link[href*='" + location + "']").remove();
 
 			// reload the current application
-			framework.loadJS("file://" + location + "/app.js", function() {
+			framework.loadJS("file://" + location + "/app.js", function () {
 
 				// app should be reappared by now
-				if(CustomApplicationsHandler.applications[id]) {
+				if (CustomApplicationsHandler.applications[id]) {
 
 					// show notification
 					this.notify("Application " + CustomApplicationsHandler.applications[id].title + " has been reloaded.");
@@ -719,7 +719,7 @@ var fs = require("fs");
 		 * (Notify) sends a desktop notification - Disabled for now until I have a settings page
 		 */
 
-		notify: function(content, title) {
+		notify: function (content, title) {
 
 			/*if(Notification) {
 
@@ -738,9 +738,9 @@ var fs = require("fs");
 		 * (setStorageView)
 		 */
 
-		setStorageView: function(appId) {
-			
-			
+		setStorageView: function (appId) {
+
+
 		},
 	}
 
@@ -748,7 +748,7 @@ var fs = require("fs");
 	 * Intialize Interface after jQuery is loaded
 	 */
 
-	$(function() {
+	$(function () {
 		Interface.initialize();
 	});
 

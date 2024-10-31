@@ -1,0 +1,5 @@
+{
+    "name": "mazda-infotainment-simulator",
+    "version": "1.0.0",
+    "main": "simulator.js"
+  }

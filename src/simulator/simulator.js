@@ -32,15 +32,11 @@
  * Startup
  */
 
-var fs = require('fs'),
-    app = require('app'),
-    BrowserWindow = require('browser-window'),
-    Menu = require('menu'),
-    Dialog = require('dialog'),
-    mainWindow = null;
+const fs = require('fs');
+const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
+let mainWindow = null;
 
-
-var APP_NAME = 'Simulator for Mazda Infotainment';
+const APP_NAME = 'Simulator for Mazda Infotainment';
 
 /**
  * (Storage)
@@ -51,7 +47,7 @@ var APP_NAME = 'Simulator for Mazda Infotainment';
  */
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function() {
+app.on('window-all-closed', function () {
 
   app.quit(); // close the app if all windows are closed
 
@@ -59,13 +55,13 @@ app.on('window-all-closed', function() {
 
 
 // Get ready for action
-app.on('ready', function() {
+app.on('ready', function () {
 
 
   // Create the main window
   mainWindow = new BrowserWindow({
     width: 1280,
-    height:755,
+    height: 755,
     title: APP_NAME,
     resizable: false,
     center: true,
@@ -82,7 +78,7 @@ app.on('ready', function() {
   BuildAppMenu();
 
   // clear the window when it's closed.
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', function () {
     mainWindow = null;
   });
 
@@ -92,7 +88,7 @@ app.on('ready', function() {
  * Menu
  */
 
-var BuildAppMenu = function() {
+var BuildAppMenu = function () {
 
   var appName = APP_NAME;
 
@@ -103,8 +99,8 @@ var BuildAppMenu = function() {
         {
           label: 'About ' + appName,
           role: 'about',
-          click: function() {
-            Dialog.showMessageBox({
+          click: function () {
+            dialog.showMessageBox({
               type: 'info',
               title: 'About',
               message: 'Simulator for Custom Application SDK\n\nThis is an alpha release.\n\n(c) 2016 flyandi'
@@ -120,31 +116,29 @@ var BuildAppMenu = function() {
         {
           label: 'Choose Runtime Location',
           accelerator: 'CmdOrCtrl+L',
-          click: function() {
-
-            var result = Dialog.showOpenDialog({
+          click: function () {
+            dialog.showOpenDialog({
               title: 'Choose Runtime Location',
               properties: ['openDirectory']
+            }, (result) => {
+              if (result && result.length > 0) {
+                mainWindow.webContents.send('runtimeLocation', result[0]);
+              }
             });
-
-            if(result && result[0]) {
-              mainWindow.webContents.send('runtimeLocation', result[0]);
-            }
           }
         },
         {
           label: 'Choose Applications Location',
           accelerator: 'CmdOrCtrl+O',
-          click: function() {
-
-            var result = Dialog.showOpenDialog({
-                title: 'Choose Applications Location',
-                properties: ['openDirectory']
-              });
-
-            if(result && result[0]) {
-              mainWindow.webContents.send('appsLocation', result[0]);
-            }
+          click: function () {
+            dialog.showOpenDialog({
+              title: 'Choose Applications Location',
+              properties: ['openDirectory']
+            }, (result) => {
+              if (result && result.length > 0) {
+                mainWindow.webContents.send('appsLocation', result[0]);
+              }
+            });
           }
         },
         {
@@ -163,8 +157,8 @@ var BuildAppMenu = function() {
         {
           label: 'Quit',
           accelerator: 'Command+Q',
-          click: function() { 
-            app.quit(); 
+          click: function () {
+            app.quit();
           }
         },
       ],
@@ -174,13 +168,13 @@ var BuildAppMenu = function() {
       submenu: [
         {
           label: 'Simulator',
-          type: 'checkbox', 
+          type: 'checkbox',
           checked: true,
           disabled: true,
         },
         {
           label: 'Showcase',
-          type: 'checkbox', 
+          type: 'checkbox',
           disabled: true,
         },
         {
@@ -189,14 +183,14 @@ var BuildAppMenu = function() {
         {
           label: 'Application Screenshot',
           accelerator: 'Command+P',
-          click: function() {
-            mainWindow.capturePage({x: 0, y: 0, width: 800, height: 480}, function(image) {
+          click: function () {
+            mainWindow.capturePage({ x: 0, y: 0, width: 800, height: 480 }, function (image) {
 
               // get fn
               fn = "casdk-simulator-" + Math.floor(Date.now() / 1000 | 0) + ".png";
 
               // save image to desktop
-              fs.writeFile(app.getPath("desktop") + "/" + fn, image.toPng(), function (err) {});
+              fs.writeFile(app.getPath("desktop") + "/" + fn, image.toPng(), function (err) { });
             });
           }
         },
@@ -206,11 +200,11 @@ var BuildAppMenu = function() {
       label: 'Debug',
       submenu: [
         {
-            label: 'Show Development Tools',
-            accelerator: 'CmdOrCtrl+A',
-            click: function() {
-              mainWindow.openDevTools();
-            }
+          label: 'Show Development Tools',
+          accelerator: 'CmdOrCtrl+A',
+          click: function () {
+            mainWindow.openDevTools();
+          }
         }
       ],
     }
