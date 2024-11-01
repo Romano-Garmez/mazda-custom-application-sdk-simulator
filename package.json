@@ -9,6 +9,9 @@
     "type": "git",
     "url": "https://github.com/flyandi/mazda-custom-application-sdk-simulator"
   },
+  "info": {
+    "macos-install-cmd": "npm_config_arch=x64 npm install"
+  },
   "devDependencies": {
     "del": "2.2.0",
     "electron": "1.8.4",
@@ -18,7 +21,6 @@
     "electron-rebuild": "1.1.3",
     "grunt-build-atom-shell": "2.1.1"
   },
-  
   "build": {
     "appId": "com.example.mazda",
     "mac": {
