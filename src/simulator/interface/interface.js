@@ -112,8 +112,20 @@ var fs = require("fs");
 				}.bind(this));
 			}.bind(this));
 
+			ipcRenderer.on('reloadRuntimeLocation', function () {
+				this.loadRuntime(function () {
+					this.showFromRecover();
+				}.bind(this));
+			}.bind(this));
+
 			ipcRenderer.on('appsLocation', function (event, location) {
 				localStorage.setItem("appsLocation", location);
+				this.loadApplications(function () {
+					this.showFromRecover();
+				}.bind(this));
+			}.bind(this));
+
+			ipcRenderer.on('reloadAppsLocation', function () {
 				this.loadApplications(function () {
 					this.showFromRecover();
 				}.bind(this));

@@ -145,11 +145,18 @@ var BuildAppMenu = function () {
           type: 'separator'
         },
         {
-          label: 'Reload Runtime'
+          label: 'Reload Runtime',
+          click: function () {
+            mainWindow.webContents.send('reloadRuntimeLocation');
+          }
+
         },
         {
           label: 'Reload Applications',
-          accelerator: 'CmdOrCtrl+R'
+          accelerator: 'CmdOrCtrl+R',
+          click: function () {
+            mainWindow.webContents.send('reloadAppsLocation');
+          }
         },
         {
           type: 'separator'
