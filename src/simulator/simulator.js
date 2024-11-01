@@ -62,8 +62,11 @@ app.on('ready', function () {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 755,
+    minWidth: 1280,
+    minHeight: 755,
+    maxWidth: 1280,
     title: APP_NAME,
-    resizable: false,
+    resizable: true,
     center: true,
     webPreferences: {
       webSecurity: false
