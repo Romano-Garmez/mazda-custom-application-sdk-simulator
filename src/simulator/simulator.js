@@ -98,13 +98,13 @@ var BuildAppMenu = function () {
       submenu: [
         {
           label: 'About ' + appName,
-          role: 'about',
+          //role: 'about',
           click: function () {
             dialog.showMessageBox({
               type: 'info',
               title: 'About',
               message: 'Simulator for Custom Application SDK\n\nThis is an alpha release.\n\n(c) 2016 flyandi'
-            })
+            });
           }
         },
         /*{
