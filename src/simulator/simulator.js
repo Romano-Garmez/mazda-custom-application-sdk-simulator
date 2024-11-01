@@ -33,12 +33,14 @@
  */
 
 const fs = require('fs');
-const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron');
 const express = require('express');
 const path = require('path');
 let mainWindow = null;
 let mockContent = '';
 let mockStyles = '';
+let intervalPaused = false;
+let intervalId = null;
 
 const APP_NAME = 'Simulator for Mazda Infotainment';
 
@@ -74,8 +76,6 @@ app.on('ready', function () {
     center: true,
     webPreferences: {
       webSecurity: false,
-      nodeIntegration: true, // Ensure nodeIntegration is enabled
-      contextIsolation: false // Ensure contextIsolation is disabled
     },
     shown: false,
   });
@@ -130,8 +130,10 @@ app.on('ready', function () {
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
-    const intervalId = setInterval(() => {
-      res.write('data: update\n\n');
+    intervalId = setInterval(() => {
+      if (!intervalPaused) {
+        res.write('data: update\n\n');
+      }
     }, 1000);
 
     req.on('close', () => {
@@ -177,6 +179,21 @@ var BuildAppMenu = function () {
         /*{
           label: 'Check for Updates',
         },*/
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Open Hosted URL',
+          click: function () {
+            shell.openExternal('http://localhost:3000/mock');
+          }
+        },
+        {
+          label: 'Pause/Resume Interval',
+          click: function () {
+            intervalPaused = !intervalPaused;
+          }
+        },
         {
           type: 'separator'
         },

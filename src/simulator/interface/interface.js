@@ -165,7 +165,6 @@ const { send } = require("process");
 				}
 
 				const mockStyles = getAllStyles(mockElement);
-				console.log('Mock Styles:', mockStyles != null); // Debugging: Log the extracted styles
 
 				ipcRenderer.send('mock-content', { content: mockContent, styles: mockStyles });
 			}
