@@ -119,6 +119,10 @@ var fs = require("fs");
 				}.bind(this));
 			}.bind(this));
 
+			ipcRenderer.on('toggleKeybShortcuts', function () {
+				Multicontroller.toggleKeybShortcuts();
+			}.bind(this));
+
 			// initialize storage
 			$(window).on('storage', function (e) {
 
@@ -313,6 +317,7 @@ var fs = require("fs");
 				}
 			}.bind(this));
 		},
+
 
 		/**
 		 * (completeApplications)

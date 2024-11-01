@@ -28,44 +28,45 @@
  * Multicontroller
  */
 
-(function() {
+(function () {
+
+	var keybShortcutsEnabled = true;
 
 	Multicontroller = {
-
 		/**
 		 * Initialize
 		 */
 
-		initialize: function() {
+		initialize: function () {
 
 			var that = this;
 
 			this.multicontroller = $("#multicontroller");
 
 			// initialize hit areas for direction
-			this.multicontroller.on("mousedown", "span.hitarea", function(event) {
+			this.multicontroller.on("mousedown", "span.hitarea", function (event) {
 
 				// set hit
 				$(this).addClass("hit");
 
 				// set direction
 				var direction = $(this).attr("direction");
-				if(direction) that.setMultiControllerDirection(direction);
+				if (direction) that.setMultiControllerDirection(direction);
 
 			});
 
 			// initialize hit areas for direction
-			this.multicontroller.on("mouseup mouseleave", "span.hitarea", function(event) {
+			this.multicontroller.on("mouseup mouseleave", "span.hitarea", function (event) {
 
 				// remove hit
 				$(this).removeClass("hit");
 
 				// clear direction
 				var direction = $(this).attr("direction");
-				if(direction) that.setMultiControllerDirection(false);
+				if (direction) that.setMultiControllerDirection(false);
 
 				// notify
-				if(event.type == "mouseup") {
+				if (event.type == "mouseup") {
 					that.notifyMultiController($(this).attr("event"));
 				}
 			});
@@ -76,9 +77,9 @@
 				baseMoved = false,
 				baseEnabled = false,
 				wheelPosition = 0;
-				position = false;
+			position = false;
 
-			base.on("mousedown", function(event) {
+			base.on("mousedown", function (event) {
 				baseEnabled = true;
 				baseMoved = false;
 				position = {
@@ -87,8 +88,8 @@
 				};
 			});
 
-			base.on("mousemove", function(e) {
-				if(baseEnabled) {
+			base.on("mousemove", function (e) {
+				if (baseEnabled) {
 
 					baseMoved = true;
 
@@ -98,9 +99,9 @@
 						treshold = 10;
 
 
-					if(Math.abs(dx) > treshold || Math.abs(dy) > treshold) {
+					if (Math.abs(dx) > treshold || Math.abs(dy) > treshold) {
 
-						switch(true) {
+						switch (true) {
 
 							/** ccw **/
 
@@ -110,7 +111,7 @@
 							case (Math.abs(dy) > Math.abs(dx) && dy < 0):
 
 								wheelPosition -= 45;
-								if(wheelPosition < 0) wheelPosition = 360 + wheelPosition;
+								if (wheelPosition < 0) wheelPosition = 360 + wheelPosition;
 								event = "ccw";
 								break;
 
@@ -122,13 +123,13 @@
 							case (Math.abs(dy) > Math.abs(dx) && dy > 0):
 
 								wheelPosition += 45;
-								if(wheelPosition > 360) wheelPosition -= 360;
+								if (wheelPosition > 360) wheelPosition -= 360;
 								event = "cw";
 								break;
 						}
 
 						// notify
-						if(event) {
+						if (event) {
 
 							// set wheel
 							base.css("transform", "rotate(" + wheelPosition + "deg)");
@@ -146,23 +147,23 @@
 				}
 			});
 
-			base.on("mouseup mouseleave", function(event) {
+			base.on("mouseup mouseleave", function (event) {
 
-				if(baseEnabled && !baseMoved) {
+				if (baseEnabled && !baseMoved) {
 					that.notifyMultiController("selectStart");
 				}
 				baseEnabled = false;
 			});
 
 			// initialize panel
-			this.multicontroller.find("#panel").on("click", "span", function() {
+			this.multicontroller.find("#panel").on("click", "span", function () {
 				that.notifyMultiController($(this).attr("event"));
 			});
 
 			// initialize keystrokes
-			$(document).keyup(function(e) {
+			$(document).keyup(function (e) {
 
-				switch(e.keyCode) {
+				switch (e.keyCode) {
 
 					case 49: this.notifyMultiController("cw"); break;
 					case 50: this.notifyMultiController("ccw"); break;
@@ -175,13 +176,11 @@
 
 
 				}
-
 			}.bind(this));
-
 		},
 
-		setMultiControllerDirection: function(direction) {
-			if(!direction) {
+		setMultiControllerDirection: function (direction) {
+			if (!direction) {
 				this.multicontroller.find("div.wheel.direction").hide();
 				this.multicontroller.find("div.wheel.base").show();
 			} else {
@@ -190,32 +189,55 @@
 			}
 		},
 
-		notifyMultiController: function(event) {
+		toggleKeybShortcuts: function () {
+			console.log("toggleKeybShortcuts state: " + keybShortcutsEnabled);
+			keybShortcutsEnabled = !keybShortcutsEnabled;
+			if (keybShortcutsEnabled) {
+				// Re-enable keyboard shortcuts
+				$(document).keyup(function (e) {
+					switch (e.keyCode) {
+						case 49: this.notifyMultiController("cw"); break;
+						case 50: this.notifyMultiController("ccw"); break;
+						case 38: this.notifyMultiController("upStart"); break;
+						case 40: this.notifyMultiController("downStart"); break;
+						case 37: this.notifyMultiController("leftStart"); break;
+						case 39: this.notifyMultiController("rightStart"); break;
+						case 13: this.notifyMultiController("selectStart"); break;
+						case 8: this.notifyMultiController("home"); break;
+					}
+				}.bind(this));
+			} else {
+				// Disable keyboard shortcuts
+				$(document).off('keyup');
+			}
+		},
+
+		notifyMultiController: function (event) {
 
 			// visualize event
 			var pb = this.multicontroller.find("#panel [event=" + event + "]").addClass("hit");
-			setTimeout(function() {
+			setTimeout(function () {
 				pb.removeClass("hit");
 			}, 450);
 
 			// switch by type
-			switch(true) {
+			switch (true) {
 
 				case Interface.inAppMenu:
 
 					// mini handler for app menu
-					switch(event) {
+					switch (event) {
 
 						case "upStart":
 
 							Interface.menuIndex -= 1;
-							if(Interface.menuIndex < 0) Interface.menuIndex = Interface.maxMenuIndex - 1;
+							if (Interface.menuIndex < 0) Interface.menuIndex = Interface.maxMenuIndex - 1;
 							break;
 
 						case "downStart":
 
 							Interface.menuIndex += 1;
-							if(Interface.menuIndex >= Interface.maxMenuIndex) Interface.menuIndex = 0;
+							if (Interface.menuIndex >= Interface.maxMenuIndex) Interface.menuIndex = 0;
 							break;
 
 						case "selectStart":
@@ -233,12 +255,12 @@
 
 				default:
 
-					if(event == "home") {
+					if (event == "home") {
 						Interface.showAppMenu();
 					} else {
 
 						// pass to current
-						if(framework.current) {
+						if (framework.current) {
 							framework.current.handleControllerEvent(event);
 						}
 					}

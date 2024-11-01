@@ -166,20 +166,20 @@ var BuildAppMenu = function () {
     {
       label: 'View',
       submenu: [
-        {
-          label: 'Simulator',
-          type: 'checkbox',
-          checked: true,
-          disabled: true,
-        },
-        {
-          label: 'Showcase',
-          type: 'checkbox',
-          disabled: true,
-        },
-        {
-          type: 'separator'
-        },
+        // {
+        //   label: 'Simulator',
+        //   type: 'checkbox',
+        //   checked: true,
+        //   disabled: true,
+        // },
+        // {
+        //   label: 'Showcase',
+        //   type: 'checkbox',
+        //   disabled: true,
+        // },
+        // {
+        //   type: 'separator'
+        // },
         {
           label: 'Application Screenshot',
           accelerator: 'Command+P',
@@ -195,6 +195,20 @@ var BuildAppMenu = function () {
           }
         },
       ],
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Toggle Keyboard Shortcuts',
+          click: function () {
+            mainWindow.webContents.send('toggleKeybShortcuts');
+          }
+        },
+      ]
     },
     {
       label: 'Debug',
