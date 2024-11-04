@@ -1,13 +1,13 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+name: Build Executables
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  #push:
+    #branches: [ "master" ]
+  #pull_request:
+    #branches: [ "master" ]
 
 jobs:
   build:
@@ -34,3 +34,13 @@ jobs:
     - run: npm install
     - run: npm run clean
     - run: npm run build
+    - name: Upload macOS Executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: macOS-executable
+        path: build/simulator/osx/
+    - name: Upload Windows Executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: Windows-executable
+        path: build/simulator/win/
