@@ -21,6 +21,9 @@
     "electron-rebuild": "1.1.3",
     "grunt-build-atom-shell": "2.1.1"
   },
+  "overrides": {
+    "graceful-fs": "^4.2.11"
+  },
   "build": {
     "appId": "com.example.mazda",
     "mac": {
