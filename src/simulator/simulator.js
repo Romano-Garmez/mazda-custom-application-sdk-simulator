@@ -105,7 +105,6 @@ app.on('ready', function () {
       <head>
         <style>${mockStyles}</style>
         <link rel="stylesheet" href="/interface/interface.css">
-        <link rel="stylesheet" href="/interface/multicontroller.css">
         <link rel="stylesheet" href="/fonts/fonts.css">
       </head>
       <body>
@@ -176,20 +175,22 @@ var BuildAppMenu = function () {
             });
           }
         },
+      ],
+    },
+    {
+      label: 'File',
+      submenu: [
         /*{
           label: 'Check for Updates',
         },*/
         {
-          type: 'separator'
-        },
-        {
-          label: 'Open Hosted URL',
+          label: 'Open in External Brower',
           click: function () {
             shell.openExternal('http://localhost:3000/mock');
           }
         },
         {
-          label: 'Pause/Resume Interval',
+          label: 'Pause/Resume Browser Refresh',
           click: function () {
             intervalPaused = !intervalPaused;
           }
