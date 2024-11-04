@@ -33,14 +33,8 @@
  */
 
 const fs = require('fs');
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron');
-const express = require('express');
-const path = require('path');
+const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 let mainWindow = null;
-let mockContent = '';
-let mockStyles = '';
-let intervalPaused = false;
-let intervalId = null;
 
 const APP_NAME = 'Simulator for Mazda Infotainment';
 
@@ -93,65 +87,6 @@ app.on('ready', function () {
     mainWindow = null;
   });
 
-  // Set up the HTTP server
-  const serverApp = express();
-  const port = 3000; // You can change the port if needed
-
-  serverApp.use(express.static(path.join(__dirname)));
-
-  // Serve the mock content
-  serverApp.get('/mock', (req, res) => {
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>${mockStyles}</style>
-        <link rel="stylesheet" href="/interface/interface.css">
-        <link rel="stylesheet" href="/fonts/fonts.css">
-      </head>
-      <body>
-        ${mockContent}
-        <script>
-          const eventSource = new EventSource('/events');
-          eventSource.onmessage = function(event) {
-            if (event.data === 'update') {
-              location.reload();
-            }
-          };
-        </script>
-      </body>
-      </html>
-    `);
-  });
-
-  // Set up SSE endpoint
-  serverApp.get('/events', (req, res) => {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders();
-
-    intervalId = setInterval(() => {
-      if (!intervalPaused) {
-        res.write('data: update\n\n');
-      }
-    }, 1000);
-
-    req.on('close', () => {
-      clearInterval(intervalId);
-    });
-  });
-
-  serverApp.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-  });
-
-  // Listen for mock content from the renderer process
-  ipcMain.on('mock-content', (event, data) => {
-
-    mockContent = data.content;
-    mockStyles = data.styles;
-  });
 });
 
 /**
@@ -177,26 +112,9 @@ var BuildAppMenu = function () {
             });
           }
         },
-      ],
-    },
-    {
-      label: 'File',
-      submenu: [
         /*{
           label: 'Check for Updates',
         },*/
-        {
-          label: 'Open in External Brower',
-          click: function () {
-            shell.openExternal('http://localhost:3000/mock');
-          }
-        },
-        {
-          label: 'Pause/Resume Browser Refresh',
-          click: function () {
-            intervalPaused = !intervalPaused;
-          }
-        },
         {
           type: 'separator'
         },

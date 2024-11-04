@@ -28,7 +28,6 @@
  * NPM/Node Integration
  */
 var fs = require("fs");
-const { send } = require("process");
 
 
 
@@ -135,43 +134,6 @@ const { send } = require("process");
 			ipcRenderer.on('toggleKeybShortcuts', function () {
 				Multicontroller.toggleKeybShortcuts();
 			}.bind(this));
-
-			// Function to send mock content to the main process
-			function sendMockContent() {
-				const mockElement = document.getElementById('mock');
-				const mockContent = mockElement.outerHTML;
-
-				// Function to get the computed styles of an element
-				function getComputedStyles(element) {
-					const computedStyles = window.getComputedStyle(element);
-					let styles = '';
-					for (let i = 0; i < computedStyles.length; i++) {
-						const property = computedStyles[i];
-						const value = computedStyles.getPropertyValue(property);
-						styles += `${property}: ${value}; `;
-					}
-					return styles;
-				}
-
-				// Function to get the styles of all elements within the mock div
-				function getAllStyles(element) {
-					let styles = '';
-					const elements = element.querySelectorAll('*');
-					elements.forEach(el => {
-						const elStyles = getComputedStyles(el);
-						styles += `#${el.id} { ${elStyles} } `;
-					});
-					return styles;
-				}
-
-				const mockStyles = getAllStyles(mockElement);
-
-				ipcRenderer.send('mock-content', { content: mockContent, styles: mockStyles });
-			}
-
-			// Set up an interval to send mock content every second
-			setInterval(sendMockContent, 1000);
-			sendMockContent();
 
 			// initialize storage
 			$(window).on('storage', function (e) {
@@ -363,7 +325,7 @@ const { send } = require("process");
 					CustomApplicationsHandler.log.error(this.__name, "Error while retrieving applications", e);
 
 					// make sure that we notify otherwise we don't get any applications
-					this.completeApplications(CustomApplicationsHandler.getMenuItems(), callback);
+					his.completeApplications(CustomApplicationsHandler.getMenuItems(), callback);
 				}
 			}.bind(this));
 		},
