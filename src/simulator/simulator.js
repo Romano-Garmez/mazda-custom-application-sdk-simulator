@@ -69,7 +69,9 @@ app.on('ready', function () {
     resizable: true,
     center: true,
     webPreferences: {
-      webSecurity: false
+      webSecurity: false,
+      nodeIntegration: true, // Enable Node.js integration
+      contextIsolation: false // Disable context isolation
     },
     shown: false,
   });
