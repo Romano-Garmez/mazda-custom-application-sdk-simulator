@@ -76,6 +76,8 @@ app.on('ready', function () {
     center: true,
     webPreferences: {
       webSecurity: false,
+      nodeIntegration: true, // Enable Node.js integration
+      contextIsolation: false // Disable context isolation
     },
     shown: false,
   });
