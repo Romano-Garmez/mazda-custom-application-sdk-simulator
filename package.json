@@ -10,6 +10,7 @@
     "url": "https://github.com/flyandi/mazda-custom-application-sdk-simulator"
   },
   "info": {
+    "notes": "make sure to run npm install in the src/simulator directory too",
     "macos-install-cmd": "npm_config_arch=x64 npm install"
   },
   "devDependencies": {
