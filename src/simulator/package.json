@@ -1,5 +1,8 @@
 {
-    "name": "mazda-infotainment-simulator",
-    "version": "1.0.0",
-    "main": "simulator.js"
+  "name": "mazda-infotainment-simulator",
+  "version": "1.0.0",
+  "main": "simulator.js",
+  "dependencies": {
+    "express": "^4.21.1"
   }
+}
