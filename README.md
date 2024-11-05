@@ -1,6 +1,12 @@
 # Simulator for Custom Applications SDK 
 
-Updated by [Roman Garms](https://github.com/Romano-Garmez) to be buildable in 2024. I intend to make some changes later.
+Updated by [Roman Garms](https://github.com/Romano-Garmez) to be buildable in 2024. 
+
+Fixes include:
+- Reload applications option now works
+- Reload runtime option now works
+- Can disable keyboard shortcuts for the multicommander (prevent pressing arrow keys in number fields from affecting your CASDK app)
+- Can open CASDK app in external browser (useful for testing your CASDK app CSS in Opera 12, though logic is still handled in the electron app)
 
 ## Discussion
 
