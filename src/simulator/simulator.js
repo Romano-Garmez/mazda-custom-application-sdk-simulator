@@ -99,30 +99,22 @@ app.on('ready', function () {
 
   serverApp.use(express.static(path.join(__dirname)));
 
-  // Serve the mock content
-  serverApp.get('/mock', (req, res) => {
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>${mockStyles}</style>
-        <link rel="stylesheet" href="/interface/interface.css">
-        <link rel="stylesheet" href="/fonts/fonts.css">
-      </head>
-      <body>
-        ${mockContent}
-        <script>
-          const eventSource = new EventSource('/events');
-          eventSource.onmessage = function(event) {
-            if (event.data === 'update') {
-              location.reload();
-            }
-          };
-        </script>
-      </body>
-      </html>
-    `);
-  });
+    // Serve the mock content
+    serverApp.get('/mock', (req, res) => {
+      fs.readFile(path.join(__dirname, 'mock.html'), 'utf8', (err, data) => {
+        if (err) {
+          res.status(500).send('Error reading mock.html');
+          return;
+        }
+  
+        // Replace placeholders with actual content
+        const htmlContent = data
+          .replace('<style id="mock-styles"></style>', `<style>${mockStyles}</style>`)
+          .replace('<div id="mock-content"></div>', mockContent);
+  
+        res.send(htmlContent);
+      });
+    });
 
   // Set up SSE endpoint
   serverApp.get('/events', (req, res) => {
@@ -186,13 +178,13 @@ var BuildAppMenu = function () {
           label: 'Check for Updates',
         },*/
         {
-          label: 'Open in External Brower',
+          label: 'Open Showcase in External Brower',
           click: function () {
             shell.openExternal('http://localhost:3000/mock');
           }
         },
         {
-          label: 'Pause/Resume Browser Refresh',
+          label: 'Pause/Resume Showcase',
           click: function () {
             intervalPaused = !intervalPaused;
           }
