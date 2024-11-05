@@ -99,22 +99,22 @@ app.on('ready', function () {
 
   serverApp.use(express.static(path.join(__dirname)));
 
-    // Serve the mock content
-    serverApp.get('/mock', (req, res) => {
-      fs.readFile(path.join(__dirname, 'mock.html'), 'utf8', (err, data) => {
-        if (err) {
-          res.status(500).send('Error reading mock.html');
-          return;
-        }
-  
-        // Replace placeholders with actual content
-        const htmlContent = data
-          .replace('<style id="mock-styles"></style>', `<style>${mockStyles}</style>`)
-          .replace('<div id="mock-content"></div>', mockContent);
-  
-        res.send(htmlContent);
-      });
+  // Serve the mock content
+  serverApp.get('/mock', (req, res) => {
+    fs.readFile(path.join(__dirname, 'mock.html'), 'utf8', (err, data) => {
+      if (err) {
+        res.status(500).send('Error reading mock.html');
+        return;
+      }
+
+      // Replace placeholders with actual content
+      const htmlContent = data
+        .replace('<style id="mock-styles"></style>', `<style>${mockStyles}</style>`)
+        .replace('<div id="mock-content"></div>', mockContent);
+
+      res.send(htmlContent);
     });
+  });
 
   // Set up SSE endpoint
   serverApp.get('/events', (req, res) => {
@@ -178,21 +178,6 @@ var BuildAppMenu = function () {
           label: 'Check for Updates',
         },*/
         {
-          label: 'Open Showcase in External Brower',
-          click: function () {
-            shell.openExternal('http://localhost:3000/mock');
-          }
-        },
-        {
-          label: 'Pause/Resume Showcase',
-          click: function () {
-            intervalPaused = !intervalPaused;
-          }
-        },
-        {
-          type: 'separator'
-        },
-        {
           label: 'Choose Runtime Location',
           accelerator: 'CmdOrCtrl+L',
           click: function () {
@@ -250,6 +235,20 @@ var BuildAppMenu = function () {
       ],
     },
     {
+      label: 'Edit',
+      submenu: [
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Toggle Keyboard Shortcuts',
+          click: function () {
+            mainWindow.webContents.send('toggleKeybShortcuts');
+          }
+        },
+      ]
+    },
+    {
       label: 'View',
       submenu: [
         // {
@@ -267,6 +266,21 @@ var BuildAppMenu = function () {
         //   type: 'separator'
         // },
         {
+          label: 'Open Showcase in External Brower',
+          click: function () {
+            shell.openExternal('http://localhost:3000/mock');
+          }
+        },
+        {
+          label: 'Pause/Resume Showcase',
+          click: function () {
+            intervalPaused = !intervalPaused;
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Application Screenshot',
           accelerator: 'Command+P',
           click: function () {
@@ -281,20 +295,6 @@ var BuildAppMenu = function () {
           }
         },
       ],
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Toggle Keyboard Shortcuts',
-          click: function () {
-            mainWindow.webContents.send('toggleKeybShortcuts');
-          }
-        },
-      ]
     },
     {
       label: 'Debug',
