@@ -18,7 +18,12 @@
             const eventSource = new EventSource('/events');
             eventSource.onmessage = function (event) {
                 if (event.data === 'update') {
-                    location.reload();
+                    fetch('/mock-update')
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('mock-styles').innerHTML = data.styles;
+                            document.getElementById('mock-content').innerHTML = data.content;
+                        });
                 }
             };
         }
@@ -26,12 +31,12 @@
         function startLongPolling() {
             function poll() {
                 const xhr = new XMLHttpRequest();
-                xhr.open('GET', '/events', true);
+                xhr.open('GET', '/mock-update', true);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 200) {
-                        if (xhr.responseText === 'update') {
-                            location.reload();
-                        }
+                        const data = JSON.parse(xhr.responseText);
+                        document.getElementById('mock-styles').innerHTML = data.styles;
+                        document.getElementById('mock-content').innerHTML = data.content;
                         poll(); // Continue polling
                     }
                 };

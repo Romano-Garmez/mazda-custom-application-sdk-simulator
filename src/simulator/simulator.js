@@ -109,11 +109,16 @@ app.on('ready', function () {
 
       // Replace placeholders with actual content
       const htmlContent = data
-        .replace('<style id="mock-styles"></style>', `<style>${mockStyles}</style>`)
-        .replace('<div id="mock-content"></div>', mockContent);
+        .replace('<style id="mock-styles"></style>', `<style id="mock-styles">${mockStyles}</style>`)
+        .replace('<div id="mock-content"></div>', `<div id="mock-content">${mockContent}</div>`);
 
       res.send(htmlContent);
     });
+  });
+
+  // Serve the updated content and styles as JSON
+  serverApp.get('/mock-update', (req, res) => {
+    res.json({ content: mockContent, styles: mockStyles });
   });
 
   // Set up SSE endpoint
