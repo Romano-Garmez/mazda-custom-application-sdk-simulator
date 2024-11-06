@@ -185,29 +185,27 @@ var BuildAppMenu = function () {
         {
           label: 'Choose Runtime Location',
           accelerator: 'CmdOrCtrl+L',
-          click: function () {
-            dialog.showOpenDialog({
+          click: async function () {
+            const result = await dialog.showOpenDialog({
               title: 'Choose Runtime Location',
               properties: ['openDirectory']
-            }, (result) => {
-              if (result && result.length > 0) {
-                mainWindow.webContents.send('runtimeLocation', result[0]);
-              }
             });
+            if (!result.canceled && result.filePaths.length > 0) {
+              mainWindow.webContents.send('runtimeLocation', result.filePaths[0]);
+            }
           }
         },
         {
           label: 'Choose Applications Location',
           accelerator: 'CmdOrCtrl+O',
-          click: function () {
-            dialog.showOpenDialog({
+          click: async function () {
+            const result = await dialog.showOpenDialog({
               title: 'Choose Applications Location',
               properties: ['openDirectory']
-            }, (result) => {
-              if (result && result.length > 0) {
-                mainWindow.webContents.send('appsLocation', result[0]);
-              }
             });
+            if (!result.canceled && result.filePaths.length > 0) {
+              mainWindow.webContents.send('appsLocation', result.filePaths[0]);
+            }
           }
         },
         {

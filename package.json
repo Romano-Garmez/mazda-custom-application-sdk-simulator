@@ -11,7 +11,8 @@
   },
   "info": {
     "notes": "make sure to run npm install in the src/simulator directory too",
-    "macos-install-cmd": "npm_config_arch=x64 npm install"
+    "macos-install-cmd": "npm_config_arch=x64 npm install",
+    "windows-install-cmd": "$env:npm_config_arch=\"x64\"; npm install"
   },
   "devDependencies": {
     "del": "2.2.0",
