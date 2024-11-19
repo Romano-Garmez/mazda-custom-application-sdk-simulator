@@ -36,12 +36,12 @@ jobs:
     - run: npm run clean
     - run: npm run build
     - name: Upload macOS Executable
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: macOS-executable
         path: build/simulator/osx/
     - name: Upload Windows Executable
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Windows-executable
         path: build/simulator/win/
