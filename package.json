@@ -36,8 +36,8 @@
     "clean:osx": "rimraf ./build/simulator/osx",
     "clean:win": "rimraf ./build/simulator/win",
     "build": "npm run prep && npm run build:osx && npm run build:win",
-    "build:osx": "npm run clean:osx && electron-packager ./src/simulator \"Mazda Infotainment Simulator\" --asar --out=build/simulator/osx --platform=darwin --arch=x64 --icon=src/assets/osx/simulator.icns --app-version=0.36.8 --overwrite --ignore=\"build|dist\" --prune=true",
-    "build:win": "npm run clean:win && electron-packager ./src/simulator \"Mazda Infotainment Simulator\" --asar --out=build/simulator/win --platform=win32 --arch=ia32 --icon=src/assets/win/simulator.ico --app-version=0.36.8 --overwrite --ignore=\"build|dist\" --prune=true"
+    "build:osx": "npm run clean:osx && electron-packager ./src/simulator \"Mazda Infotainment Simulator\" --asar --out=build/simulator/osx --platform=darwin --arch=universal --icon=src/assets/osx/simulator.icns --app-version=0.36.8 --overwrite --ignore=\"build|dist\" --prune=true",
+    "build:win": "npm run clean:win && electron-packager ./src/simulator \"Mazda Infotainment Simulator\" --asar --out=build/simulator/win --platform=win32 --arch=x64 --icon=src/assets/win/simulator.ico --app-version=0.36.8 --overwrite --ignore=\"build|dist\" --prune=true"
   },
   "license": "GPL-3.0"
 }
