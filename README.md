@@ -8,6 +8,12 @@ Fixes include:
 - Can disable keyboard shortcuts for the multicommander (prevent pressing arrow keys in number fields from affecting your CASDK app)
 - Can open CASDK app in external browser (useful for testing your CASDK app CSS in Opera 12, though logic is still handled in the electron app)
 
+---
+
+## Unfortunately this will likely be the end of me working on this project. Another driver wrecked my car, and insurance deemed it totalled. I'd be happy to answer any questions about hacking the Mazda Connect system or writing CASDK apps.
+
+---
+
 ## Discussion
 
 The official discussion thread is on Mazda3Revolution:
